@@ -1,5 +1,5 @@
 //
-//  ViewController.h
+//  TableViewController.h
 //  LCY_VFLAutoLayout
 //
 //  Created by GuoBIn on 15/7/6.
@@ -8,8 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ViewController : UIViewController
+@interface TableViewController : UITableViewController
 
-@property (nonatomic,copy) NSNumber *number;
 @end
-
