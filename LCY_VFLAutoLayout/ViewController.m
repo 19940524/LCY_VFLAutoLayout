@@ -8,6 +8,12 @@
 
 #import "ViewController.h"
 
+//获取设备的物理高度
+#define ScreenHeight [UIScreen mainScreen].bounds.size.height
+
+//获取设备的物理宽度
+#define ScreenWidth [UIScreen mainScreen].bounds.size.width
+
 @interface ViewController ()
 {
     NSDictionary *dic;
@@ -48,6 +54,32 @@
  为Padding,这两个视图间距必须大于或等于0并且距离底部父视图为 padding。
  10:  [wideView(>=60@700)]  :视图的宽度为至少为60 不能超过  700
  11: 如果没有声明方向默认为  水平
+ 
+ 功能　　　　　　　　表达式
+ 
+ 水平方向  　　　　　　  H:
+ 
+ 垂直方向  　　　　　　  V:
+ 
+ Views　　　　　　　　 [view]
+ 
+ SuperView　　　　　　|
+ 
+ 关系　　　　　　　　　>=,==,<=
+ 
+ 空间,间隙　　　　　　　-
+ 
+ 优先级　　　　　　　　@value
+ ----------------------------------------
+ NSLayoutFormatOptions
+         NSLayoutFormatAlignAllLeft = (1 << NSLayoutAttributeLeft),
+         NSLayoutFormatAlignAllRight = (1 << NSLayoutAttributeRight),
+         NSLayoutFormatAlignAllTop = (1 << NSLayoutAttributeTop),
+         NSLayoutFormatAlignAllBottom = (1 << NSLayoutAttributeBottom),
+         NSLayoutFormatAlignAllLeading = (1 << NSLayoutAttributeLeading),
+         NSLayoutFormatAlignAllTrailing = (1 << NSLayoutAttributeTrailing),
+         NSLayoutFormatAlignAllCenterX = (1 << NSLayoutAttributeCenterX),
+         NSLayoutFormatAlignAllCenterY = (1 << NSLayoutAttributeCenterY),
  */
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -86,6 +118,11 @@
             [self.view addSubview:view1];
             [self.view addSubview:view2];
             [self example_4];
+            break;
+        case 4:
+            [self.view addSubview:cyanView];
+            [cyanView addSubview:redView];
+            [self example_5];
             break;
             
         default:
@@ -191,6 +228,47 @@
     [self superView:self.view :@"V:[view1(cyanView)]" :0];
     [self superView:self.view :@"H:[view2(cyanView)]" :0];
     [self superView:self.view :@"V:[view2(cyanView)]" :0];
+}
+
+- (void)example_5 {
+    /*
+     metrics 是一个字典 把字典放在Format字符串上 key 对应value
+     */
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-interval-[cyanView]-interval-|"
+                                                                      options:0
+                                                                      metrics:@{@"interval":@0}
+                                                                        views:dic]];
+    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-interval-[cyanView]-interval-|"
+                                                                      options:0
+                                                                      metrics:@{@"interval":@50}
+                                                                        views:dic]];
+    
+    [cyanView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:[redView(width)]"
+                                                                      options:0
+                                                                      metrics:@{@"width":[NSNumber numberWithFloat:ScreenWidth / 2]}
+                                                                        views:dic]];
+    [cyanView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[redView(height)]"
+                                                                     options:0
+                                                                     metrics:@{@"height":[NSNumber numberWithFloat:ScreenHeight / 4]}
+                                                                       views:dic]];
+#warning 美中不足的是VFL没有居中的代码   只能用下面的方法了
+    [cyanView addConstraint:[NSLayoutConstraint constraintWithItem:cyanView
+                                                          attribute:NSLayoutAttributeCenterX
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem:redView
+                                                          attribute:NSLayoutAttributeCenterX
+                                                         multiplier:1
+                                                           constant:0]];
+    
+    [cyanView addConstraint:[NSLayoutConstraint constraintWithItem:cyanView
+                                                          attribute:NSLayoutAttributeCenterY
+                                                          relatedBy:NSLayoutRelationEqual
+                                                             toItem:redView
+                                                          attribute:NSLayoutAttributeCenterY
+                                                         multiplier:1
+                                                           constant:0]];
+    
+    
 }
 
 - (void)superView :(UIView *)superView :(NSString *)format :(NSLayoutFormatOptions)options {
